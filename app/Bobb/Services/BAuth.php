@@ -25,7 +25,11 @@ class BAuth
         {
             // login function
             $user = SysUser::where('email_user', $email)->first();
-            if(!Hash::check($password, $user->password_user))
+            if(!$user)
+            {
+                $user = false;
+            }
+            else if(!Hash::check($password, $user->password_user))
             {
                 $user = false;
             }
