@@ -6,7 +6,8 @@ class ModulesServiceProvider extends \Illuminate\Support\ServiceProvider
     public function boot()
     {
         $modules = config("module.modules");
-        while (list(,$module) = @each($modules))
+
+        foreach ($modules as $module)
         {
             if(file_exists(__DIR__.'/../Modules/'.$module.'/routes.php'))
             {
