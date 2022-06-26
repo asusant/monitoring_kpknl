@@ -48,43 +48,7 @@ Histori {!! $subtitle !!}
         </div>
         <div class="col-md-2 col-sm-12"></div>
         <div class="row">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between">
-                    <span class="pull-left">
-                        <h4 class="card-title">{!! $help->strHighlight($permohonan->no_permohonan, 'primary') !!}</h4>
-                        <small><span class="bi bi-building"></span> {{ $permohonan->asal_surat }}</small>
-                    </span>
-                    <span class="pull-right">
-                        @if ($permohonan->sts_permohonan != 9)
-                            <strong>Tahap: {!! $permohonan->nm_tahap_aktif.' '.$help->strHighlight('<i class="bi bi-hourglass-split"></i> '.$help->timeLeft($now, $permohonan->deadline_tahap_aktif, ($now > $permohonan->deadline_tahap_aktif ? 'yang lalu' : 'lagi')), ($now > $permohonan->deadline_tahap_aktif ? 'danger' : 'warning') ) !!}</strong>
-                        @else
-                            {!! $help->strHighlight('Selesai', 'success') !!}
-                        @endif
-                    </span>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-borderless">
-                            <tr>
-                                <td width="15%">ND Pemohon</td>
-                                <td width="1%">:</td>
-                                <td width="34%"><strong>{{ $permohonan->no_surat }}</strong></td>
-                                <td width="15%">KL-Eselon 1</td>
-                                <td width="1%">:</td>
-                                <td width="34%"><strong>{{ $permohonan->kl_eselon_1 }}</strong></td>
-                            </tr>
-                            <tr>
-                                <td>Tgl. ND Pemohon</td>
-                                <td>:</td>
-                                <td><strong>{{ $permohonan->tgl_surat }}</strong></td>
-                                <td>Satker</td>
-                                <td>:</td>
-                                <td><strong>{{ $permohonan->satker }}</strong></td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            @include('MonitoringKpknl::permohonan.detail-component')
             <div class="card">
                 <div class="card-body">
                     <h4>Hisory Perjalanan</h4>
@@ -118,11 +82,31 @@ Histori {!! $subtitle !!}
                                                     @endif
                                                 </td>
                                                 <td>{{ $help->parseDateTime($r->wkt_selesai_perjalanan) }}</td>
-                                                <td>{{ $help->timeLeft($r->wkt_mulai_perjalanan, $r->wkt_selesai_perjalanan, 'yang lalu') }}</td>
+                                                <td>{{ $help->timeLeft($r->wkt_mulai_perjalanan, $r->wkt_selesai_perjalanan, '') }}</td>
                                                 <td align="center">
                                                     {{ ($r->nm_user ? $r->nm_user : $r->nm_role) }}
                                                     @if ($r->sts_perjalanan != 1 && $r->id_role_tahap == (new BAuth)->getActiveRole() )
-                                                        <br>{{ link_to(route($r->ext_form_route, ['id' => $r->id_permohonan]), 'Proses', ['class' => 'btn btn-info btn-sm']) }}
+                                                        @switch($r->ext_form_route)
+                                                            @case('form')
+                                                                @php
+                                                                    $route = route($r->ext_form_route, ['id' => $r->id_permohonan]);
+                                                                    $btnText = 'Proses';
+                                                                @endphp
+                                                                @break
+                                                            @case('confirm')
+                                                                @php
+                                                                    $route = route('perjalanan_permohonan.form-konfirmasi.read', ['id' => $r->id_permohonan]);
+                                                                    $btnText = 'Proses';
+                                                                @endphp
+                                                                @break
+                                                            @default
+                                                                @php
+                                                                    $route = route($r->ext_form_route, ['id' => $r->id_permohonan]);
+                                                                    $btnText = 'Cetak';
+                                                                @endphp
+                                                                @break
+                                                        @endswitch
+                                                        <br>{{ link_to($route, 'Proses', ['class' => 'btn btn-info btn-sm']) }}
                                                     @endif
                                                 </td>
                                             </tr>

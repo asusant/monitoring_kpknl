@@ -24,9 +24,11 @@ class Permohonan extends Model
         'bsg'           => 'Bangun Serah Guna (BSG)'
     ];
 
+    public $ref_jns_form_khusus = ['ksp', 'bgs', 'bsg'];
+
     public $ref_sts_permohonan = [
         '0' => 'Antrian Verifikasi',
-        '1' => 'Proses',
+        '1' => 'Proses/Lanjut',
         '2' => 'Dikembalikan',
         '3' => 'Hold',
         '4' => 'Tolak',
@@ -90,6 +92,10 @@ class Permohonan extends Model
         if(isset($no_permohonan))
         {
             $q->where('no_permohonan', $no_permohonan);
+        }
+        if(isset($id_permohonan))
+        {
+            $q->where('id_permohonan', $id_permohonan);
         }
         return $q->get();
     }

@@ -50,4 +50,16 @@ class TahapMonitoring extends Model
     {
         return self::where('is_aktif', 1)->pluck('id_role_tahap', 'urutan_tahap')->toArray();
     }
+
+    public function getNextTahap($id_tahap)
+    {
+        $tahap = TahapMonitoring::find($id_tahap);
+        if(!$tahap)
+        {
+            return NULL;
+        }
+        // next
+        $next = TahapMonitoring::where('urutan_tahap', $tahap->urutan_tahap+1)->first();
+        return $next;
+    }
 }

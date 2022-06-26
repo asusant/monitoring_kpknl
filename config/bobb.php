@@ -65,7 +65,11 @@ return [
         'valid'     => [
             0   => 'Tidak Valid',
             1   => 'Valid'
-        ]
+        ],
+        'ada'       => [
+            1   => 'Ada',
+            0   => 'Tidak Ada'
+        ],
     ],
     'class_boolean' => [
         0   => 'danger',

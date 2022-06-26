@@ -40,5 +40,8 @@ $slug = 'perjalanan_permohonan';
 Route::group(['middleware' => ['web','auth'],'namespace' => 'App\Modules'.$nama_modul.'\Controllers','prefix'=>$slug], function () use ($slug){
     Route::get('/', [PerjalananController::class, 'index'])->name($slug.'.read');
     Route::post('/detail', [PerjalananController::class, 'detail'])->name($slug.'.detail.read');
-    Route::get('/verifikasi-kelengkapan/{id}', [PerjalananController::class, 'formVerifikasi'])->name($slug.'.form-verifikasi-kelengkapan.read');
+    Route::get('/detail/{no_permohonan}', [PerjalananController::class, 'detail'])->name($slug.'.detail-get.read');
+    Route::get('/form-konfirmasi/{id}', [PerjalananController::class, 'formKonfirmasi'])->name($slug.'.form-konfirmasi.read');
+    Route::get('/verifikasi-kelengkapan/{id}', [PerjalananController::class, 'formVerifikasiKelengkapan'])->name($slug.'.form-verifikasi-kelengkapan.read');
+    Route::post('/verifikasi-kelengkapan', [PerjalananController::class, 'postVerifikasiKelengkapan'])->name($slug.'.verifikasi-kelengkapan.read');
 });
