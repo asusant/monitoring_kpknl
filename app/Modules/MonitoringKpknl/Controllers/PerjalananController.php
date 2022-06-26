@@ -40,7 +40,7 @@ class PerjalananController
         return view('MonitoringKpknl::perjalanan.index', $data);
     }
 
-    public function detail($no_permohonan = '', Request $req)
+    public function detail(Request $req, $no_permohonan = '')
     {
         if($no_permohonan != '')
         {
