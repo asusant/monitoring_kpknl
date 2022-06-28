@@ -80,7 +80,7 @@
                                                 @if ($max_tahap > $r->id_tahap_aktif)
                                                     {{-- Cek boleh akses? --}}
                                                     @if ((new BAuth)->getActiveRole() == $map_role_tahap[$r->id_tahap_aktif])
-                                                        {{ link_to(route($base_route.'.edit', ['id' => $r->id_permohonan]), 'Proses', ['class' => 'btn btn-info btn-sm']) }}
+                                                        {{ link_to(route('perjalanan_permohonan.detail-get.read', ['no_permohonan' => base64_encode($r->no_permohonan) ]), 'Perjalanan', ['class' => 'btn btn-info btn-sm']) }}
                                                     @endif
                                                 @endif
                                                 @if ($r->id_tahap_aktif <= 2)
