@@ -51,7 +51,7 @@
                                     <th>No. Permohonan</th>
                                     <th>Surat</th>
                                     <th>Objek</th>
-                                    <th>Dalam Rangka</th>
+                                    <th>Penilaian</th>
                                     <th>Tahapan Sebelumnya</th>
                                     <th>Tahapan Berlangsung</th>
                                     <th width="15%">Aksi</th>
@@ -62,28 +62,29 @@
                                     @php $now = date('Y-m-d H:i:s'); @endphp
                                     @foreach ($data as $r)
                                         <tr class="{{ ( $now > $r->deadline_tahap_aktif && $r->sts_permohonan != 9 ? 'bg-danger text-white' : '' ) }}">
-                                            <td>{{ $r->no_permohonan }}<br>Status: {!! $help->strHighlight($model->ref_sts_permohonan[$r->sts_permohonan], $model->class_sts_permohonan[$r->sts_permohonan]) !!}</td>
+                                            <td>{{ link_to(route('perjalanan_permohonan.detail-get.read', ['no_permohonan' => base64_encode($r->no_permohonan) ]), $r->no_permohonan, ['class' => 'text-nowrap']) }}<br>Status: {!! $help->strHighlight($model->ref_sts_permohonan[$r->sts_permohonan], $model->class_sts_permohonan[$r->sts_permohonan]) !!}</td>
                                             {{-- <td>Asal: {!! $help->strHighlight($r->asal_surat, 'primary') !!}<br>No: {!! $help->strHighlight($r->no_surat, 'info') !!}<br>Tgl: {!! $help->strHighlight($help->parseDate($r->tgl_surat), 'warning') !!}</td> --}}
                                             <td>Asal: <strong>{{ $r->asal_surat }}</strong><br>No: <strong>{{ $r->no_surat }}</strong><br>Tgl: <strong>{{ $help->parseDate($r->tgl_surat) }}</strong></td>
                                             {{-- <td>Pemilik: {!! $help->strHighlight($r->pemilik_obj_penilaian, 'primary') !!}<br>Jenis: {!! $help->strHighlight($r->jns_obj_penilaian, 'info') !!}<br>Indikasi Nilai: {!! $help->strHighlight("Rp ".$help->formatNumber($r->indikasi_nilai), 'success') !!}</td> --}}
                                             <td>Pemilik: {!! $help->strHighlight($r->pemilik_obj_penilaian, 'primary') !!}<br>Jenis: <strong>{{ $r->jns_obj_penilaian }}</strong><br>Indikasi Nilai: {!! $help->strHighlight("Rp ".$help->formatNumber($r->indikasi_nilai), 'success') !!}</td>
-                                            <td>{{ $r->dalam_rangka }}</td>
+                                            <td>
+                                                Ketua Tim: <strong>{{ $r->ketua_tim }}</strong><br>
+                                                Jadwal Survey: <strong>{{ $help->parseDate($r->jadwal_survey) }}</strong>
+                                            </td>
                                             <td><span class="bi bi-bookmark-fill"></span> {{ $r->nm_tahapan_sebelum }}<br>{!! $help->strHighlight('<i class="bi bi-check-all"></i> '.$help->parseDateTime($r->proses_tahap_sebelum), 'success') !!}</td>
                                             <td>
                                                 @if ($r->sts_permohonan != '9')
                                                     <span class="bi bi-stopwatch-fill"></span> {{ $r->nm_tahapan_aktif }}<br>{!! $help->strHighlight('<i class="bi bi-hourglass-split"></i> '.$help->timeLeft($now, $r->deadline_tahap_aktif), ( $now > $r->deadline_tahap_aktif ? 'danger' : 'warning' )) !!}
                                                 @else
-                                                    <span class="bi bi-clipboard-check-fill"></span>
+                                                    {!! $help->strHighlight('<span class="bi bi-check-all"></span> Selesai', 'success') !!}
                                                 @endif
                                             </td>
                                             <td>
                                                 @if ($max_tahap > $r->id_tahap_aktif)
                                                     {{-- Cek boleh akses? --}}
-                                                    @if ((new BAuth)->getActiveRole() == $map_role_tahap[$r->id_tahap_aktif])
-                                                        {{ link_to(route('perjalanan_permohonan.detail-get.read', ['no_permohonan' => base64_encode($r->no_permohonan) ]), 'Perjalanan', ['class' => 'btn btn-info btn-sm']) }}
-                                                    @endif
+                                                    {{ link_to(route('perjalanan_permohonan.detail-get.read', ['no_permohonan' => base64_encode($r->no_permohonan) ]), 'Perjalanan', ['class' => 'btn btn-info btn-sm']) }}
                                                 @endif
-                                                @if ($r->id_tahap_aktif <= 2)
+                                                @if ($r->id_tahap_aktif <= 2 && !in_array($r->sts_permohonan, [4,9]))
                                                     {!! (new BApp)->btnAkses($base_route, $r->{$model->getPrimaryKey()}, (!$use_validate ? ['validate'] : []), 'btn-sm') !!}
                                                 @endif
                                             </td>

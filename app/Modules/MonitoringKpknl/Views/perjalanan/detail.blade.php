@@ -72,10 +72,10 @@ Histori {!! $subtitle !!}
                                         @foreach ($perjalanan as $r)
                                             <tr>
                                                 <td>{{ $no-- }}</td>
-                                                <td>{{ $r->nm_tahap }}</td>
+                                                <td>{!! $r->nm_tahap.' <sup><span class="badge bg-primary">'.$r->urutan_tahap.'</span></sup>'.'<br><small><strong>Status: '.$help->strHighlight($r->ref_sts_perjalanan[$r->sts_perjalanan], $r->class_sts_perjalanan[$r->sts_perjalanan]).'</small></strong>'.($r->catatan ? '<br><small><strong>Catatan: '.$r->catatan.'</small></strong>' : '') !!}</td>
                                                 <td>{{ $help->parseDateTime($r->wkt_mulai_perjalanan) }}</td>
-                                                <td class="{{ ($r->sts_perjalanan == 1 ? 'text-success' : ($now > $r->next_deadline ? 'text-danger' : 'text-warning') ) }}">
-                                                    @if ($r->sts_perjalanan != 1)
+                                                <td class="{{ $r->class_sts_perjalanan[$r->sts_perjalanan] }}">
+                                                    @if ($r->sts_perjalanan == 0)
                                                         {!! $help->strHighlight($help->timeLeft($r->next_deadline, $now, ($now < $r->next_deadline ? 'lagi' : 'yang lalu') ), ($now < $r->next_deadline ? 'warning' : 'danger') ) !!}
                                                     @else
                                                         {{ $help->parseDateTime($r->next_deadline) }}
@@ -85,8 +85,8 @@ Histori {!! $subtitle !!}
                                                 <td>{{ $help->timeLeft($r->wkt_mulai_perjalanan, $r->wkt_selesai_perjalanan, '') }}</td>
                                                 <td align="center">
                                                     {{ ($r->nm_user ? $r->nm_user : $r->nm_role) }}
-                                                    @if ($r->sts_perjalanan != 1 && $r->id_role_tahap == (new BAuth)->getActiveRole() )
-                                                        @switch($r->ext_form_route)
+                                                    @if ( in_array($r->sts_perjalanan, $permohonan->ref_sts_stop) && $r->id_role_tahap == (new BAuth)->getActiveRole() && $no != sizeof($perjalanan) )
+                                                        @switch($r->jns_tahap)
                                                             @case('form')
                                                                 @php
                                                                     $route = route($r->ext_form_route, ['id' => $r->id_permohonan]);
@@ -99,14 +99,17 @@ Histori {!! $subtitle !!}
                                                                     $btnText = 'Proses';
                                                                 @endphp
                                                                 @break
-                                                            @default
+                                                            @case('print')
                                                                 @php
-                                                                    $route = route($r->ext_form_route, ['id' => $r->id_permohonan]);
-                                                                    $btnText = 'Cetak';
+                                                                    $route = route('perjalanan_permohonan.form-konfirmasi.read', ['id' => $r->id_permohonan]);
+                                                                    $btnText = 'Proses';
                                                                 @endphp
                                                                 @break
                                                         @endswitch
-                                                        <br>{{ link_to($route, 'Proses', ['class' => 'btn btn-info btn-sm']) }}
+                                                        <br>{{ link_to($route, $btnText, ['class' => 'btn btn-info btn-sm']) }}
+                                                    @endif
+                                                    @if ($r->jns_tahap == 'print')
+                                                        <a href="{{ route($r->ext_form_route, ['id' => $r->id_permohonan]) }}" class="btn btn-success btn-sm"><i class="bi bi-printer"></i> Cetak</a>
                                                     @endif
                                                 </td>
                                             </tr>

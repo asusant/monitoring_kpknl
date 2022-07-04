@@ -5,6 +5,7 @@ namespace App\Modules\MonitoringKpkNl\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class TimPenilaian extends Model
@@ -36,6 +37,25 @@ class TimPenilaian extends Model
         return self::join('sys_user', 'id_user_tim_penilaian', 'id_user')
             ->select(DB::raw('CONCAT(nm_user, " (", email_user, ")") as user_tim_penilaian'), $this->table.'.*')
             ->paginate($limit);
+    }
+
+    public function getSelfPenilai()
+    {
+        return self::where('id_user_tim_penilaian', Auth::user()->id_user)->first();
+    }
+
+    public function getForSelect($only_active = false)
+    {
+        $q = (new self)->select(
+            'id_tim_penilaian',
+            DB::raw('CONCAT(nm_tim_penilaian, " (", nip_tim_penilaian, ")") as nm_tim_penilaian')
+        );
+        if($only_active)
+        {
+            $q->where('is_aktif', 1);
+        }
+        $q->orderBy('urutan_tim_penilaian');
+        return $q->get()->pluck('nm_tim_penilaian', 'id_tim_penilaian')->toArray();
     }
 
 }

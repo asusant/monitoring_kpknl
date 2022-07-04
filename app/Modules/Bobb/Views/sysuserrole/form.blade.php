@@ -80,5 +80,5 @@ Form Role User
 
 @section('extra-js')
 <!-- Include Choices JavaScript -->
-<script src="{{ asset('vendors/choices.js/choices.min.js') }}"></script>
+<script src="{{ asset('vendors/choices.js/choices.min.js?v=2') }}"></script>
 @endsection

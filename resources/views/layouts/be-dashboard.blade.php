@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ asset('vendors/perfect-scrollbar/perfect-scrollbar.css') }}">
     <link rel="stylesheet" href="{{ asset('vendors/bootstrap-icons/bootstrap-icons.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/app.css?t='.time()) }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css?v=1') }}">
     <link rel="shortcut icon" href="{{ asset('favicon.png') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('vendors/toastify/toastify.css') }}">
     @yield('extra-css')
@@ -235,7 +235,7 @@
     {{-- Non Mandatory Here --}}
     @yield('extra-js')
 
-    <script src="{{ asset('js/bapp.js?=1') }}"></script>
+    <script src="{{ asset('js/bapp.js?v=1') }}"></script>
 
     {{-- SSO --}}
     @if(session()->get('is_sso'))

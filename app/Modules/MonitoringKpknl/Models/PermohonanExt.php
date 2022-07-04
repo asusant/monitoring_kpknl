@@ -13,7 +13,7 @@ class PermohonanExt extends Model
 	protected $dates = ['deleted_at'];
 	protected $table = 'permohonan_ext';
     protected $primaryKey = 'id_permohonan';
-    protected $fillable = ['dok_id_obj', 'dok_jns_nilai', 'dok_latar_belakang', 'dok_tujuan', 'dok_legalitas', 'dok_desc_obj', 'dok_tata_usaha', 'dok_sk_berat_volume', 'dok_laporan_penilai', 'dok_fc_ba_penyitaan', 'dok_proposal', 'dok_laporan_keuangan', 'dok_laporan_apip', 'dok_lainnya', 'created_by', 'updated_by', 'deleted_by'];
+    protected $fillable = ['dok_id_obj', 'dok_jns_nilai', 'dok_latar_belakang', 'dok_tujuan', 'dok_legalitas', 'dok_desc_obj', 'dok_tata_usaha', 'dok_sk_berat_volume', 'dok_laporan_penilai', 'dok_fc_ba_penyitaan', 'dok_proposal', 'dok_laporan_keuangan', 'dok_laporan_apip', 'dok_lainnya', 'id_ketua_tim', 'created_by', 'updated_by', 'deleted_by'];
 
     public $ref_boolean_col = [
         'dok_id_obj'            => 'Identitas Objek Penilaian',

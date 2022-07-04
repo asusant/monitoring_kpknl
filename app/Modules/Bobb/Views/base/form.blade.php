@@ -82,7 +82,7 @@
 @endsection
 @section('extra-js')
 <!-- Include Choices JavaScript -->
-<script src="{{ asset('vendors/choices.js/choices.min.js') }}"></script>
+<script src="{{ asset('vendors/choices.js/choices.min.js?v=2') }}"></script>
 <!-- Include DatePicker JS -->
 <script src="{{ asset('vendors/datepicker/js/datepicker.min.js') }}"></script>
 @endsection

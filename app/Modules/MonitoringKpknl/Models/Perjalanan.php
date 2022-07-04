@@ -17,21 +17,24 @@ class Perjalanan extends Model
 
     public $ref_sts_perjalanan = [
         '0' => 'Menunggu diproses',
-        '1' => 'Diterima',
-        '2' => 'Penghapusan',
-        '3' => 'Kerja Sama Pemanfaatan (KSP)'
+        '1' => 'Proses/Lanjut',
+        '2' => 'Revisi',
     ];
     public $class_sts_perjalanan = [
-        'sewa'          => 'Sewa',
-        'penjualan'     => 'Penjualan',
-        'penghapusan'   => 'Penghapusan',
-        'ksp'           => 'Kerja Sama Pemanfaatan (KSP)',
-        'bgs'           => 'Bangun Guna Serah (BGS)',
-        'bsg'           => 'Bangun Serah Guna (BSG)'
+        '0' => 'primary',
+        '1' => 'success',
+        '2' => 'danger'
     ];
 
     public static function validation_data($update_id = "NULL") {
-        return [];
+        return [
+            'id_permohonan'     => 'required|numeric',
+            'sts_permohonan'    => 'required|in:0,1,2',
+            'catatan'           => 'required_unless:sts_permohonan,1|max:192',
+            'is_deadline_manual'=> 'required|in:0,1',
+            'tgl_deadline'      => 'required_if:is_deadline_manual,1',
+            'jam_deadline'      => 'required_if:is_deadline_manual,1'
+        ];
     }
 
     public function getPrimaryKey()
@@ -39,14 +42,25 @@ class Perjalanan extends Model
         return $this->primaryKey;
     }
 
-    public function getPerjalanan($id_permohonan)
+    public function getPerjalanan($id_permohonan, $filters = [])
     {
         $t = $this->table;
-        return self::leftJoin('sys_user as b', 'id_user_perjalanan', 'b.id_user')
+        extract($filters);
+        $q = self::leftJoin('sys_user as b', 'id_user_perjalanan', 'b.id_user')
             ->join('tahap_monitoring as c', $t.'.id_tahap', 'c.id_tahap')
             ->join('sys_role as d', 'c.id_role_tahap', 'd.id_role')
-            ->where('id_permohonan', $id_permohonan)
-            ->whereNull('c.deleted_at')
+            ->where('id_permohonan', $id_permohonan);
+
+        if(isset($id_tahap) && $id_tahap > 0)
+        {
+            $q->where($t.'.id_tahap', $id_tahap);
+        }
+        if(isset($urutan_tahap) && $urutan_tahap)
+        {
+            $q->where('c.urutan_tahap', $urutan_tahap);
+        }
+
+        return $q->whereNull('c.deleted_at')
             ->orderBy('created_at', 'DESC')
             ->orderBy('urutan_tahap', 'DESC')
             ->get([
@@ -56,27 +70,13 @@ class Perjalanan extends Model
                 'c.urutan_tahap',
                 'c.ext_form_route',
                 'c.id_role_tahap',
+                'c.jns_tahap',
                 'd.nm_role'
             ]);
     }
 
-    public function simpanPerjalanan($permohonan, $sts_perjalanan, $catatan, $is_deadline_manual, $now = '')
+    public function getCurrentPerjalanan($id_permohonan)
     {
-        if($now == '')
-        {
-            $now = date('Y-m-d H:i:s');
-        }
-        $perjalanan = new Perjalanan;
-        $perjalanan->id_permohonan = $permohonan->id_permohonan;
-        $perjalanan->id_tahap = $permohonan->id_tahap_sebelum;
-        $perjalanan->wkt_mulai_perjalanan = $now;
-        $perjalanan->wkt_selesai_perjalanan = $now;
-        $perjalanan->sts_perjalanan = $sts_perjalanan;
-        $perjalanan->id_user_perjalanan = $permohonan->id_user_tahap_sebelum;
-        $perjalanan->catatan = $catatan;
-        $perjalanan->is_deadline_manual = $is_deadline_manual;
-        $perjalanan->next_deadline = $permohonan->deadline_tahap_aktif;
-        $perjalanan->created_by = Auth::user()->id_user;
-        $perjalanan->save();
+        return self::where('id_permohonan', $id_permohonan)->orderBy('created_at')->orderBy('urutan_tahap', 'DESC')->first();
     }
 }

@@ -189,10 +189,9 @@ class PermohonanController extends BaseController
 
         $current_tahap = 1;
         $next_tahap = 2;
-        $next_tahap2 = 3;
         $now = date('Y-m-d H:i:s');
+        $current_deadline = (new SPermohonan)->getNextDeadline($current_tahap, $now);
         $next_deadline = (new SPermohonan)->getNextDeadline($next_tahap, $now);
-        $next_deadline2 = (new SPermohonan)->getNextDeadline($next_tahap2, $now);
 
         $dt = $this->model;
 		foreach ($dt->validation_data() as $col => $rule)
@@ -204,7 +203,7 @@ class PermohonanController extends BaseController
         $dt->proses_tahap_sebelum = $now;
         $dt->id_user_tahap_sebelum = Auth::user()->id_user;
         $dt->id_tahap_aktif = $next_tahap;
-        $dt->deadline_tahap_aktif = $next_deadline2;
+        $dt->deadline_tahap_aktif = $next_deadline;
 		$dt->created_by = Auth::user()->id_user;
 		$dt->save();
 
@@ -216,9 +215,9 @@ class PermohonanController extends BaseController
         $perjalanan->wkt_selesai_perjalanan = $now;
         $perjalanan->sts_perjalanan = 1;
         $perjalanan->id_user_perjalanan = $dt->id_user_tahap_sebelum;
-        $perjalanan->catatan = "Sys: Record Otomatis";
+        $perjalanan->catatan = "[System] Record Otomatis";
         $perjalanan->is_deadline_manual = 0;
-        $perjalanan->next_deadline = $next_deadline;
+        $perjalanan->next_deadline = $current_deadline;
         $perjalanan->created_by = Auth::user()->id_user;
         $perjalanan->save();
         // Insert perjalanan Aktif
@@ -231,7 +230,7 @@ class PermohonanController extends BaseController
         $perjalanan->id_user_perjalanan = NULL;
         $perjalanan->catatan = NULL;
         $perjalanan->is_deadline_manual = 0;
-        $perjalanan->next_deadline = $next_deadline2;
+        $perjalanan->next_deadline = $next_deadline;
         $perjalanan->created_by = Auth::user()->id_user;
         $perjalanan->save();
 
@@ -247,6 +246,12 @@ class PermohonanController extends BaseController
         $this->validate($req, $this->model->validation_data($req->input($this->model->getPrimaryKey())));
 
         $dt = $this->model->findOrFail($req->input($this->model->getPrimaryKey()));
+
+        if($dt->id_tahap_aktif > 2 || in_array($dt->sts_permohonan, [4,9]))
+        {
+            return redirect(route($this->base_route.'.read'))->withInput()->with('alert', ['danger', 'Data sudah tidak dapat diubah!']);
+        }
+
 		foreach ($dt->validation_data($req->input($this->model->getPrimaryKey())) as $col => $rule)
 		{
 			if($req->input($col) != '')
@@ -256,6 +261,23 @@ class PermohonanController extends BaseController
 		}
         $dt->indikasi_nilai = $this->help->fetchNominal($dt->indikasi_nilai);
         $dt->updated_by = Auth::user()->id_user;
+
+        // Proses kembali setelah dikembalikan
+        if($dt->sts_permohonan == 2)
+        {
+            $now = date('Y-m-d H:i:s');
+            $dt_process = [
+                'sts_lanjut'            => 1,
+                'wkt_process'           => $now,
+                'catatan'               => '[System] Proses ulang setelah dikembalikan',
+                'is_deadline_manual'    => 0,
+                'jam_deadline'          => NULL,
+                'tgl_deadline'          => NULL
+            ];
+            (new SPermohonan)->prosesPerjalanan($dt, $dt_process, 2);
+
+            $dt->sts_permohonan = 0;
+        }
 
         BApp::log('Mengubah data '.$this->title.'. id='.$dt->{$this->model->getPrimaryKey()}.'.', $dt->getOriginal(), $req->except('_token'));
         $dt->save();

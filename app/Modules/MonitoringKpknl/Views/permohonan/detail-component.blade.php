@@ -7,6 +7,12 @@
         <span class="pull-right">
             @if ($permohonan->sts_permohonan != 9)
                 <strong>Tahap Aktif: {!! $permohonan->nm_tahap_aktif.' '.$help->strHighlight('<i class="bi bi-hourglass-split"></i> '.$help->timeLeft($now, $permohonan->deadline_tahap_aktif, ($now > $permohonan->deadline_tahap_aktif ? 'yang lalu' : 'lagi')), ($now > $permohonan->deadline_tahap_aktif ? 'danger' : 'warning') ) !!}</strong>
+                <br>
+                @if ($permohonan->sts_permohonan != '1')
+                    <p class="text-right fw-bold">
+                        Status: {!! $help->strHighlight($permohonan->ref_sts_permohonan[$permohonan->sts_permohonan], $permohonan->class_sts_permohonan[$permohonan->sts_permohonan]) !!}
+                    </p>
+                @endif
             @else
                 {!! $help->strHighlight('Selesai', 'success') !!}
             @endif

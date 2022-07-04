@@ -743,11 +743,23 @@ class Helper
         }
         if($interval->format('%h') > 0)
         {
+            $min = '';
             if($str != '')
             {
                 $str .= ' ';
             }
-            $str .= $interval->format('%h').' jam';
+            else
+            {
+                $min = ' '.intval($interval->format('%i')).' menit';
+            }
+            $str .= $interval->format('%h').' jam'.$min;
+        }
+        else
+        {
+            if($str == '')
+            {
+                $str .= ' '.intval($interval->format('%i')).' menit';
+            }
         }
 
         if($str == '')
