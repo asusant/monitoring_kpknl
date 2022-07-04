@@ -13,7 +13,8 @@ class PermohonanExt extends Model
 	protected $dates = ['deleted_at'];
 	protected $table = 'permohonan_ext';
     protected $primaryKey = 'id_permohonan';
-    protected $fillable = ['dok_id_obj', 'dok_jns_nilai', 'dok_latar_belakang', 'dok_tujuan', 'dok_legalitas', 'dok_desc_obj', 'dok_tata_usaha', 'dok_sk_berat_volume', 'dok_laporan_penilai', 'dok_fc_ba_penyitaan', 'dok_proposal', 'dok_laporan_keuangan', 'dok_laporan_apip', 'dok_lainnya', 'id_ketua_tim', 'created_by', 'updated_by', 'deleted_by'];
+    protected $fillable = ['dok_id_obj', 'dok_jns_nilai', 'dok_latar_belakang', 'dok_tujuan', 'dok_legalitas', 'dok_desc_obj', 'dok_tata_usaha', 'dok_sk_berat_volume', 'dok_laporan_penilai', 'dok_fc_ba_penyitaan', 'dok_proposal', 'dok_laporan_keuangan', 'dok_laporan_apip', 'dok_lainnya', 'id_ketua_tim', 'no_nd_tim_penilai', 'tgl_nd_tim_penilai', 'hal_nd_tim_penilai', 'no_sk_tim_penilai', 'tgl_sk_tim_penilai', 'hal_sk_tim_penilai', 'dok_permohonan_lain', 'dok_sk_tim_penilaian', 'dok_permohonan_penilaian', 'is_nd_survey_jadi', 'is_nd_st_penilai_jadi', 'no_nd_survey_tim_penilai', 'tgl_nd_survey_tim_penilai', 'hal_nd_survey_tim_penilai', 'no_nd_st_tim_penilai', 'tgl_nd_st_tim_penilai', 'hal_nd_st_tim_penilai', 'jadwal_survey', 'no_st_tim_penilai', 'tgl_st_tim_penilai', 'hal_st_tim_penilai', 'created_by', 'updated_by', 'deleted_by'
+    ];
 
     public $ref_boolean_col = [
         'dok_id_obj'            => 'Identitas Objek Penilaian',

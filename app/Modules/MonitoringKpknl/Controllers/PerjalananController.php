@@ -422,7 +422,7 @@ class PerjalananController extends Controller
         $permohonan_ext->no_nd_tim_penilai = $req->input('no_nd_tim_penilai');
         $permohonan_ext->tgl_nd_tim_penilai = $req->input('tgl_nd_tim_penilai');
         $permohonan_ext->hal_nd_tim_penilai = $req->input('hal_nd_tim_penilai');
-        $permohonan_ext->updated_by = Auth::user()->id;
+        $permohonan_ext->updated_by = Auth::user()->id_user;
         $permohonan_ext->save();
 
         BApp::log('Melakukan Konfirmasi Proses '.$permohonan->nm_tahap_aktif.'.', $req->except('_token'));
@@ -489,7 +489,7 @@ class PerjalananController extends Controller
         $permohonan_ext->no_sk_tim_penilai = $req->input('no_sk_tim_penilai');
         $permohonan_ext->tgl_sk_tim_penilai = $req->input('tgl_sk_tim_penilai');
         $permohonan_ext->hal_sk_tim_penilai = $req->input('hal_sk_tim_penilai');
-        $permohonan_ext->updated_by = Auth::user()->id;
+        $permohonan_ext->updated_by = Auth::user()->id_user;
         $permohonan_ext->save();
 
         BApp::log('Melakukan Konfirmasi Proses '.$permohonan->nm_tahap_aktif.'.', $req->except('_token'));
@@ -556,7 +556,7 @@ class PerjalananController extends Controller
         $permohonan_ext->dok_permohonan_penilaian = $req->input('dok_permohonan_penilaian');
         $permohonan_ext->dok_sk_tim_penilaian = $req->input('dok_sk_tim_penilaian');
         $permohonan_ext->dok_permohonan_lain = $req->input('dok_permohonan_lain');
-        $permohonan_ext->updated_by = Auth::user()->id;
+        $permohonan_ext->updated_by = Auth::user()->id_user;
         $permohonan_ext->save();
 
         BApp::log('Melakukan Konfirmasi Proses '.$permohonan->nm_tahap_aktif.'.', $req->except('_token'));
@@ -621,7 +621,7 @@ class PerjalananController extends Controller
         $permohonan_ext = PermohonanExt::find($req->input('id_permohonan'));
         $permohonan_ext->is_nd_st_penilai_jadi = $req->input('is_nd_st_penilai_jadi');
         $permohonan_ext->is_nd_survey_jadi = $req->input('is_nd_survey_jadi');
-        $permohonan_ext->updated_by = Auth::user()->id;
+        $permohonan_ext->updated_by = Auth::user()->id_user;
         $permohonan_ext->save();
 
         BApp::log('Melakukan Konfirmasi Proses '.$permohonan->nm_tahap_aktif.'.', $req->except('_token'));
@@ -698,7 +698,7 @@ class PerjalananController extends Controller
         $permohonan_ext->tgl_nd_survey_tim_penilai = $req->input('tgl_nd_survey_tim_penilai');
         $permohonan_ext->hal_nd_survey_tim_penilai = $req->input('hal_nd_survey_tim_penilai');
 
-        $permohonan_ext->updated_by = Auth::user()->id;
+        $permohonan_ext->updated_by = Auth::user()->id_user;
         $permohonan_ext->save();
 
         BApp::log('Melakukan Konfirmasi Proses '.$permohonan->nm_tahap_aktif.'.', $req->except('_token'));
@@ -767,7 +767,7 @@ class PerjalananController extends Controller
         $permohonan_ext->tgl_st_tim_penilai = $req->input('tgl_st_tim_penilai');
         $permohonan_ext->hal_st_tim_penilai = $req->input('hal_st_tim_penilai');
         $permohonan_ext->jadwal_survey = $req->input('jadwal_survey');
-        $permohonan_ext->updated_by = Auth::user()->id;
+        $permohonan_ext->updated_by = Auth::user()->id_user;
         $permohonan_ext->save();
 
         BApp::log('Melakukan Konfirmasi Proses '.$permohonan->nm_tahap_aktif.'.', $req->except('_token'));
