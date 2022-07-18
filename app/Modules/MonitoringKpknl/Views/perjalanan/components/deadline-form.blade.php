@@ -1,4 +1,17 @@
 <div class="col-md-5 text-end">
+    <label for="tgl_riil">Tanggal Riil</label>
+</div>
+<div class="col-md-3">
+    <div class="form-group">
+        {{ Form::text('tgl_riil', NULL, ['class' => 'form-control', 'placeholder' => 'Tanggal riil', 'data-datepicker' => '', 'id' => 'tgl_riil']) }}
+        <small><i>Tanggal riil pelaksanaan di lapangan</i></small>
+        @if ($errors->has('tgl_riil'))
+            <div class="invalid-feedback">{{ implode(' | ', $errors->get('tgl_riil')) }}</div>
+            <script>(function() { document.getElementById('tgl_riil').classList.add('is-invalid')})();</script>
+        @endif
+    </div>
+</div>
+<div class="col-md-5 text-end">
     <label for="sts_permohonan">Status Permohonan</label>
 </div>
 <div class="col-md-3">

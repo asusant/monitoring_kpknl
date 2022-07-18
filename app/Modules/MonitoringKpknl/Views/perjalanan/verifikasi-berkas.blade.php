@@ -43,11 +43,12 @@
                     <h3 class="text-center">Form Verifikasi Kelengkapan Berkas</h3>
                 </div>
                 <div class="card-body">
-                    {{ Form::model($permohonan_ext, ['route' => 'perjalanan_permohonan.verifikasi-kelengkapan.read', 'class' => 'form form-horizontal'] ) }}
+                    {{ Form::model($permohonan_ext, ['route' => $route_form, 'class' => 'form form-horizontal'] ) }}
                         <div class="form-body">
                             {{ Form::hidden('id_permohonan', $permohonan->id_permohonan) }}
                             <div class="row">
                                 @csrf
+                                @if (!$only_data)
                                 <div class="col-md-5 text-end">
                                     <label>Tahap</label>
                                 </div>
@@ -56,6 +57,7 @@
                                         {{ Form::text('', $permohonan->nm_tahap_aktif, ['class' => 'form-control', 'disabled' => true]) }}
                                     </div>
                                 </div>
+                                @endif
                                 @foreach ($list_verifikasi_boolean as $nm_col => $desc)
                                     <div class="col-md-5 text-end">
                                         <label for="{{ $nm_col }}">{{ $desc }}</label>
@@ -83,12 +85,14 @@
                                         @endif
                                     </div>
                                 </div>
-                                @include('MonitoringKpknl::perjalanan.components.deadline-form')
+                                @if (!$only_data)
+                                    @include('MonitoringKpknl::perjalanan.components.deadline-form')
+                                @endif
                                 @if ($allow_save)
                                     <div class="col-md-5"></div>
                                     <div class="col-md-7 mt-3">
                                         {!! (new BApp)->submitBtn('Simpan') !!}
-                                        <a href="{{ route('perjalanan_permohonan.form-verifikasi-kelengkapan.read', ['id' => $permohonan->id_permohonan]) }}" class="btn btn-secondary me-1 mb-1">Batal</a>
+                                        <a href="{{ route('perjalanan_permohonan.detail-get.read', ['no_permohonan' => base64_encode($permohonan->no_permohonan)]) }}" class="btn btn-secondary me-1 mb-1">Batal/Kembali</a>
                                     </div>
                                 @endif
                             </div>

@@ -13,7 +13,7 @@ class Perjalanan extends Model
 	protected $dates = ['deleted_at'];
 	protected $table = 'perjalanan_permohonan';
     protected $primaryKey = 'id_perjalanan';
-    protected $fillable = ['id_permohonan', 'id_tahap', 'wkt_mulai_perjalanan', 'sts_perjalanan', 'id_user_perjalanan', 'catatan', 'is_deadline_manual', 'next_deadline', 'created_by', 'updated_by', 'deleted_by'];
+    protected $fillable = ['id_permohonan', 'id_tahap', 'wkt_mulai_perjalanan', 'sts_perjalanan', 'id_user_perjalanan', 'catatan', 'is_deadline_manual', 'next_deadline', 'tgl_riil', 'created_by', 'updated_by', 'deleted_by'];
 
     public $ref_sts_perjalanan = [
         '0' => 'Menunggu diproses',
@@ -33,7 +33,8 @@ class Perjalanan extends Model
             'catatan'           => 'required_unless:sts_permohonan,1|max:192',
             'is_deadline_manual'=> 'required|in:0,1',
             'tgl_deadline'      => 'required_if:is_deadline_manual,1',
-            'jam_deadline'      => 'required_if:is_deadline_manual,1'
+            'jam_deadline'      => 'required_if:is_deadline_manual,1',
+            'tgl_riil'          => 'required|date'
         ];
     }
 

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Bobb\Libs\BApp;
 use Illuminate\Support\Facades\Auth;
 use App\Bobb\Helpers\Helper as Help;
+use App\Modules\MonitoringKpkNl\Models\JnsPermohonan;
 use App\Modules\MonitoringKpkNl\Models\Perjalanan;
 use App\Modules\MonitoringKpkNl\Models\TahapMonitoring;
 use App\Modules\MonitoringKpkNl\Services\SPermohonan;
@@ -29,6 +30,7 @@ class PermohonanController extends BaseController
     {
         parent::__construct();
         $this->model = new Permohonan();
+        $ref_jns = (new JnsPermohonan)->getForSelect();
 
         $this->form = [
             'no_permohonan'  => [
@@ -218,6 +220,7 @@ class PermohonanController extends BaseController
         $perjalanan->catatan = "[System] Record Otomatis";
         $perjalanan->is_deadline_manual = 0;
         $perjalanan->next_deadline = $current_deadline;
+        $perjalanan->tgl_riil = $dt->tgl_terima_ka_kantor;
         $perjalanan->created_by = Auth::user()->id_user;
         $perjalanan->save();
         // Insert perjalanan Aktif

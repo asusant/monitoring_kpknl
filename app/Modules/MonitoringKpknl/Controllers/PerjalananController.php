@@ -23,6 +23,7 @@ class PerjalananController extends Controller
     public $base_route = 'perjalanan_permohonan';
     public $breadcrumbs = [];
     public $data = [];
+    public $update_route = 'perjalanan_permohonan.update-data.read';
 
     public function __construct()
     {
@@ -84,13 +85,9 @@ class PerjalananController extends Controller
             return redirect()->back()->withInput()->with('alert', ['danger', 'Data Permohonan tidak ditemukan!']);
         }
         $data['next_tahap'] = (new TahapMonitoring)->getNextTahap($data['permohonan']->id_tahap_aktif);
-        $data['next_deadline'] = (new SPermohonan)->getNextDeadline($data['next_tahap']->urutan_tahap, $data['now']);
+        $data['next_deadline'] = (new SPermohonan)->getNextDeadline(@$data['next_tahap']->urutan_tahap, $data['now']);
         $data['permohonan_ext'] = PermohonanExt::find($id);
         $data['allow_save'] = true;
-        if($data['permohonan_ext'] && $data['permohonan']->id_tahap_aktif > 2)
-        {
-            $data['allow_save'] = false;
-        }
         $data['list_verifikasi_boolean'] = (new PermohonanExt())->ref_boolean_col;
         $data['ref_permohonan_ext'] = (new PermohonanExt());
         $data['ref_sts_permohonan'] = $data['permohonan']->ref_sts_permohonan;
@@ -98,6 +95,13 @@ class PerjalananController extends Controller
         {
             unset($data['ref_sts_permohonan']['0']);
             unset($data['ref_sts_permohonan']['9']);
+        }
+        $data['only_data'] = false;
+        $data['route_form'] = 'perjalanan_permohonan.verifikasi-kelengkapan.read';
+        if($data['permohonan']->ext_form_route != Route::currentRouteName())
+        {
+            $data['only_data'] = true;
+            $data['route_form'] = $this->update_route;
         }
         return view('MonitoringKpknl::perjalanan.verifikasi-berkas', $data);
     }
@@ -110,6 +114,9 @@ class PerjalananController extends Controller
         $rules['is_deadline_manual'] = 'required|in:0,1';
         $rules['tgl_deadline'] = 'required_if:is_deadline_manual,1';
         $rules['jam_deadline'] = 'required_if:is_deadline_manual,1';
+        $rules['jam_deadline'] = 'required_if:is_deadline_manual,1';
+        $rules['tgl_riil'] = 'required:date';
+
         $this->validate($req, $rules);
 
         $permohonan = (new Permohonan)->getDetail(['id_permohonan' => $req->input('id_permohonan')])->first();
@@ -132,7 +139,8 @@ class PerjalananController extends Controller
             'catatan'               => $req->input('catatan'),
             'is_deadline_manual'    => $req->input('is_deadline_manual'),
             'jam_deadline'          => $req->input('jam_deadline'),
-            'tgl_deadline'          => $req->input('tgl_deadline')
+            'tgl_deadline'          => $req->input('tgl_deadline'),
+            'tgl_riil'              => $req->input('tgl_riil')
         ];
 
         switch ($req->input('sts_permohonan')) {
@@ -191,7 +199,7 @@ class PerjalananController extends Controller
         }
 
         $data['next_tahap'] = (new TahapMonitoring)->getNextTahap($data['permohonan']->id_tahap_aktif);
-        $data['next_deadline'] = (new SPermohonan)->getNextDeadline($data['next_tahap']->urutan_tahap, $data['now']);
+        $data['next_deadline'] = (new SPermohonan)->getNextDeadline(@$data['next_tahap']->urutan_tahap, $data['now']);
         $data['ref_penilai'] = (new TimPenilaian)->getForSelect(true);
 
         $penilai = (new TimPenilaiPermohonan)->getPenilai(['id_permohonan' => $data['permohonan']->id_permohonan]);
@@ -218,6 +226,14 @@ class PerjalananController extends Controller
         }
         // dd($data['allow_save'], Route::currentRouteName(), $data['permohonan']->ext_form_route);
         $data['ref_sts_permohonan'] = (new Perjalanan)->ref_sts_perjalanan;
+
+        $data['only_data'] = false;
+        $data['route_form'] = 'perjalanan_permohonan.kecukupan-penilai.read';
+        if($data['permohonan']->ext_form_route != Route::currentRouteName())
+        {
+            $data['only_data'] = true;
+            $data['route_form'] = $this->update_route;
+        }
 
         return view('MonitoringKpknl::perjalanan.kecukupan-penilai', $data);
     }
@@ -290,7 +306,8 @@ class PerjalananController extends Controller
             'catatan'               => $req->input('catatan'),
             'is_deadline_manual'    => $req->input('is_deadline_manual'),
             'jam_deadline'          => $req->input('jam_deadline'),
-            'tgl_deadline'          => $req->input('tgl_deadline')
+            'tgl_deadline'          => $req->input('tgl_deadline'),
+            'tgl_riil'              => $req->input('tgl_riil')
         ];
 
         $sPermohonan->prosesPerjalanan($permohonan, $dt_process);
@@ -353,7 +370,8 @@ class PerjalananController extends Controller
             'catatan'               => $req->input('catatan'),
             'is_deadline_manual'    => $req->input('is_deadline_manual'),
             'jam_deadline'          => $req->input('jam_deadline'),
-            'tgl_deadline'          => $req->input('tgl_deadline')
+            'tgl_deadline'          => $req->input('tgl_deadline'),
+            'tgl_riil'              => $req->input('tgl_riil')
         ];
 
         $sPermohonan->prosesPerjalanan($permohonan, $dt_process);
@@ -373,7 +391,7 @@ class PerjalananController extends Controller
         }
         $data['permohonan_ext'] = PermohonanExt::find($id);
 
-        $data['title'] = 'Form '.$data['permohonan']->nm_tahap_aktif;
+        $data['title'] = 'Form Nota Dinas Penerbitan Surat Keputusan Tim Penilai';
         $data['subtitle'] = 'Lengkapi Form '.$data['permohonan']->nm_tahap_aktif.' Berikut';
 
         $data['next_tahap'] = (new TahapMonitoring)->getNextTahap($data['permohonan']->id_tahap_aktif);
@@ -385,6 +403,14 @@ class PerjalananController extends Controller
 
         $data['allow_save'] = true;
         $data['ref_sts_permohonan'] = (new Perjalanan)->ref_sts_perjalanan;
+
+        $data['only_data'] = false;
+        $data['route_form'] = 'perjalanan_permohonan.konfirmasi.read';
+        if($data['permohonan']->ext_form_route != Route::currentRouteName())
+        {
+            $data['only_data'] = true;
+            $data['route_form'] = $this->update_route;
+        }
 
         return view('MonitoringKpknl::perjalanan.nd-sk-tim-penilai', $data);
     }
@@ -413,7 +439,8 @@ class PerjalananController extends Controller
             'catatan'               => $req->input('catatan'),
             'is_deadline_manual'    => $req->input('is_deadline_manual'),
             'jam_deadline'          => $req->input('jam_deadline'),
-            'tgl_deadline'          => $req->input('tgl_deadline')
+            'tgl_deadline'          => $req->input('tgl_deadline'),
+            'tgl_riil'              => $req->input('tgl_riil')
         ];
 
         $sPermohonan->prosesPerjalanan($permohonan, $dt_process);
@@ -440,7 +467,7 @@ class PerjalananController extends Controller
         }
         $data['permohonan_ext'] = PermohonanExt::find($id);
 
-        $data['title'] = 'Form '.$data['permohonan']->nm_tahap_aktif;
+        $data['title'] = 'Form Surat Keputusan Tim Penilai';
         $data['subtitle'] = 'Lengkapi Form '.$data['permohonan']->nm_tahap_aktif.' Berikut';
 
         $data['next_tahap'] = (new TahapMonitoring)->getNextTahap($data['permohonan']->id_tahap_aktif);
@@ -452,6 +479,14 @@ class PerjalananController extends Controller
 
         $data['allow_save'] = true;
         $data['ref_sts_permohonan'] = (new Perjalanan)->ref_sts_perjalanan;
+
+        $data['only_data'] = false;
+        $data['route_form'] = 'perjalanan_permohonan.sk-tim-penilai.read';
+        if($data['permohonan']->ext_form_route != Route::currentRouteName())
+        {
+            $data['only_data'] = true;
+            $data['route_form'] = $this->update_route;
+        }
 
         return view('MonitoringKpknl::perjalanan.sk-tim-penilai', $data);
     }
@@ -480,7 +515,8 @@ class PerjalananController extends Controller
             'catatan'               => $req->input('catatan'),
             'is_deadline_manual'    => $req->input('is_deadline_manual'),
             'jam_deadline'          => $req->input('jam_deadline'),
-            'tgl_deadline'          => $req->input('tgl_deadline')
+            'tgl_deadline'          => $req->input('tgl_deadline'),
+            'tgl_riil'              => $req->input('tgl_riil')
         ];
 
         $sPermohonan->prosesPerjalanan($permohonan, $dt_process);
@@ -507,7 +543,7 @@ class PerjalananController extends Controller
         }
         $data['permohonan_ext'] = PermohonanExt::find($id);
 
-        $data['title'] = 'Form '.$data['permohonan']->nm_tahap_aktif;
+        $data['title'] = 'Form Serah Terima Berkas Permohonan kepada Tim Penilai';
         $data['subtitle'] = 'Lengkapi Form '.$data['permohonan']->nm_tahap_aktif.' Berikut';
 
         $data['next_tahap'] = (new TahapMonitoring)->getNextTahap($data['permohonan']->id_tahap_aktif);
@@ -519,6 +555,14 @@ class PerjalananController extends Controller
 
         $data['allow_save'] = true;
         $data['ref_sts_permohonan'] = (new Perjalanan)->ref_sts_perjalanan;
+
+        $data['only_data'] = false;
+        $data['route_form'] = 'perjalanan_permohonan.st-permohonan-tim-penilai.read';
+        if($data['permohonan']->ext_form_route != Route::currentRouteName())
+        {
+            $data['only_data'] = true;
+            $data['route_form'] = $this->update_route;
+        }
 
         return view('MonitoringKpknl::perjalanan.st-tim-penilai', $data);
     }
@@ -547,7 +591,8 @@ class PerjalananController extends Controller
             'catatan'               => $req->input('catatan'),
             'is_deadline_manual'    => $req->input('is_deadline_manual'),
             'jam_deadline'          => $req->input('jam_deadline'),
-            'tgl_deadline'          => $req->input('tgl_deadline')
+            'tgl_deadline'          => $req->input('tgl_deadline'),
+            'tgl_riil'              => $req->input('tgl_riil')
         ];
 
         $sPermohonan->prosesPerjalanan($permohonan, $dt_process);
@@ -574,7 +619,7 @@ class PerjalananController extends Controller
         }
         $data['permohonan_ext'] = PermohonanExt::find($id);
 
-        $data['title'] = 'Form '.$data['permohonan']->nm_tahap_aktif;
+        $data['title'] = 'Form Konsep ND ST Tim Penilaian';
         $data['subtitle'] = 'Lengkapi Form '.$data['permohonan']->nm_tahap_aktif.' Berikut';
 
         $data['next_tahap'] = (new TahapMonitoring)->getNextTahap($data['permohonan']->id_tahap_aktif);
@@ -586,6 +631,14 @@ class PerjalananController extends Controller
 
         $data['allow_save'] = true;
         $data['ref_sts_permohonan'] = (new Perjalanan)->ref_sts_perjalanan;
+
+        $data['only_data'] = false;
+        $data['route_form'] = 'perjalanan_permohonan.konsep-nd-st-penilai.read';
+        if($data['permohonan']->ext_form_route != Route::currentRouteName())
+        {
+            $data['only_data'] = true;
+            $data['route_form'] = $this->update_route;
+        }
 
         return view('MonitoringKpknl::perjalanan.konsep-nd', $data);
     }
@@ -613,7 +666,8 @@ class PerjalananController extends Controller
             'catatan'               => $req->input('catatan'),
             'is_deadline_manual'    => $req->input('is_deadline_manual'),
             'jam_deadline'          => $req->input('jam_deadline'),
-            'tgl_deadline'          => $req->input('tgl_deadline')
+            'tgl_deadline'          => $req->input('tgl_deadline'),
+            'tgl_riil'              => $req->input('tgl_riil')
         ];
 
         $sPermohonan->prosesPerjalanan($permohonan, $dt_process);
@@ -639,7 +693,7 @@ class PerjalananController extends Controller
         }
         $data['permohonan_ext'] = PermohonanExt::find($id);
 
-        $data['title'] = 'Form '.$data['permohonan']->nm_tahap_aktif;
+        $data['title'] = 'Form TTD ND ST Tim Penilai';
         $data['subtitle'] = 'Lengkapi Form '.$data['permohonan']->nm_tahap_aktif.' Berikut';
 
         $data['next_tahap'] = (new TahapMonitoring)->getNextTahap($data['permohonan']->id_tahap_aktif);
@@ -651,6 +705,14 @@ class PerjalananController extends Controller
 
         $data['allow_save'] = true;
         $data['ref_sts_permohonan'] = (new Perjalanan)->ref_sts_perjalanan;
+
+        $data['only_data'] = false;
+        $data['route_form'] = 'perjalanan_permohonan.ttd-nd-st-penilai.read';
+        if($data['permohonan']->ext_form_route != Route::currentRouteName())
+        {
+            $data['only_data'] = true;
+            $data['route_form'] = $this->update_route;
+        }
 
         return view('MonitoringKpknl::perjalanan.nd-st-penilai', $data);
     }
@@ -683,7 +745,8 @@ class PerjalananController extends Controller
             'catatan'               => $req->input('catatan'),
             'is_deadline_manual'    => $req->input('is_deadline_manual'),
             'jam_deadline'          => $req->input('jam_deadline'),
-            'tgl_deadline'          => $req->input('tgl_deadline')
+            'tgl_deadline'          => $req->input('tgl_deadline'),
+            'tgl_riil'              => $req->input('tgl_riil')
         ];
 
         $sPermohonan->prosesPerjalanan($permohonan, $dt_process);
@@ -716,7 +779,7 @@ class PerjalananController extends Controller
         }
         $data['permohonan_ext'] = PermohonanExt::find($id);
 
-        $data['title'] = 'Form '.$data['permohonan']->nm_tahap_aktif;
+        $data['title'] = 'Form Penerbitan Surat Tugas Tim Penilai';
         $data['subtitle'] = 'Lengkapi Form '.$data['permohonan']->nm_tahap_aktif.' Berikut';
 
         $data['next_tahap'] = (new TahapMonitoring)->getNextTahap($data['permohonan']->id_tahap_aktif);
@@ -728,6 +791,14 @@ class PerjalananController extends Controller
 
         $data['allow_save'] = true;
         $data['ref_sts_permohonan'] = (new Perjalanan)->ref_sts_perjalanan;
+
+        $data['only_data'] = false;
+        $data['route_form'] = 'perjalanan_permohonan.st-penilai.read';;
+        if($data['permohonan']->ext_form_route != Route::currentRouteName())
+        {
+            $data['only_data'] = true;
+            $data['route_form'] = $this->update_route;
+        }
 
         return view('MonitoringKpknl::perjalanan.form-stugas-tim-penilai', $data);
     }
@@ -757,7 +828,8 @@ class PerjalananController extends Controller
             'catatan'               => $req->input('catatan'),
             'is_deadline_manual'    => $req->input('is_deadline_manual'),
             'jam_deadline'          => $req->input('jam_deadline'),
-            'tgl_deadline'          => $req->input('tgl_deadline')
+            'tgl_deadline'          => $req->input('tgl_deadline'),
+            'tgl_riil'              => $req->input('tgl_riil')
         ];
 
         $sPermohonan->prosesPerjalanan($permohonan, $dt_process);
@@ -773,6 +845,56 @@ class PerjalananController extends Controller
         BApp::log('Melakukan Konfirmasi Proses '.$permohonan->nm_tahap_aktif.'.', $req->except('_token'));
 
         return redirect(route('perjalanan_permohonan.detail-get.read', ['no_permohonan' => base64_encode($permohonan->no_permohonan)]))->with('alert', ['success', 'Berhasil memproses data permohonan <strong>'.$permohonan->no_permohonan.'</strong>']);
+    }
+
+    public function postUpdateData(Request $req)
+    {
+        $rules = [
+            'id_permohonan' => 'required|numeric|min:0'
+        ];
+        $this->validate($req, $rules);
+
+        $p = (new Permohonan);
+        $pe = (new PermohonanExt);
+
+        $p = (new Permohonan)->getDetail(['id_permohonan' => $req->input('id_permohonan')])->first();
+        if(!$p)
+        {
+            return redirect()->back()->withInput()->with('alert', ['danger', 'Data Permohonan tidak ditemukan!']);
+        }
+
+        $pe = PermohonanExt::find($req->input('id_permohonan'));
+
+        $up_p = false;
+        $up_pe = false;
+        foreach ($req->except('_token') as $col => $val)
+        {
+            if(in_array($col, $p->cols))
+            {
+                $p->{$col} = $val;
+                $up_p = true;
+            }
+            if($pe && in_array($col, $pe->cols))
+            {
+                $pe->{$col} = $val;
+                $up_pe = true;
+            }
+        }
+
+        if($up_p)
+        {
+            $p->updated_by = Auth::user()->id_user;
+            $p->save();
+        }
+
+        if($up_pe)
+        {
+            $pe->updated_by = Auth::user()->id_user;
+            $pe->save();
+        }
+
+        BApp::log('Melakukan update data Permohonan & Permohonan Ext.', $req->except('_token'));
+        return redirect()->back()->withInput()->with('alert', ['success', 'Data berhasil diperbarui!']);
     }
 
 }

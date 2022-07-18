@@ -45,11 +45,12 @@
                     <h3 class="text-center">Form Kecukupan Tenaga Penilai</h3>
                 </div>
                 <div class="card-body">
-                    {{ Form::model($penilai, ['route' => 'perjalanan_permohonan.kecukupan-penilai.read', 'class' => 'form form-horizontal'] ) }}
+                    {{ Form::model($penilai, ['route' => $route_form, 'class' => 'form form-horizontal'] ) }}
                         <div class="form-body">
                             {{ Form::hidden('id_permohonan', $permohonan->id_permohonan) }}
                             <div class="row">
                                 @csrf
+                                @if (!$only_data)
                                 <div class="col-md-5 text-end">
                                     <label>Tahap</label>
                                 </div>
@@ -58,6 +59,7 @@
                                         {{ Form::text('', $permohonan->nm_tahap_aktif, ['class' => 'form-control', 'disabled' => true]) }}
                                     </div>
                                 </div>
+                                @endif
                                 <div class="col-md-5"></div>
                                 <div class="col-md-7">
                                     <div class="alert alert-info">
@@ -85,7 +87,9 @@
                                         {{ Form::select('anggota_tim[]', $ref_penilai, NULL, ['class' => 'form-control choices multiple-remove', 'id' => 'anggota_tim', 'multiple' => 'multiple']) }}
                                     </div>
                                 </div>
+                                @if (!$only_data)
                                 @include('MonitoringKpknl::perjalanan.components.deadline-form')
+                                @endif
                                 <div class="col-md-5"></div>
                                 <div class="col-md-7 mt-3">
                                     @if ($allow_save)

@@ -16,6 +16,13 @@ class Permohonan extends Model
     protected $primaryKey = 'id_permohonan';
     protected $fillable = ['no_permohonan', 'n_verifikasi', 'asal_surat', 'no_surat', 'tgl_surat', 'kl_eselon_1', 'satker', 'jns_aset', 'dalam_rangka', 'tindak_lanjut_bmn', 'pemilik_obj_penilaian', 'jns_obj_penilaian', 'desc_obj_penilaian', 'indikasi_nilai', 'tgl_terima_ka_kantor', 'tgl_terima_verifikator', 'batas_verifikasi', 'ket_khusus', 'id_tahap_aktif', 'deadline_tahap_aktif', 'id_tahap_sebelum', 'proses_tahap_sebelum', 'id_user_tahap_sebelum', 'sts_permohonan', 'created_by', 'updated_by', 'deleted_by'];
     protected $id_role_penilai = 5;
+    public $cols = [];
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->cols = $this->fillable;
+    }
 
     public $ref_jns_permohonan = [
         'sewa'          => 'Sewa',
@@ -31,9 +38,9 @@ class Permohonan extends Model
     public $ref_sts_permohonan = [
         '0' => 'Antrian Verifikasi',
         '1' => 'Proses/Lanjut',
-        '2' => 'Dikembalikan/Revisi',
-        '3' => 'Hold',
-        '4' => 'Tolak',
+        '2' => 'Permintaan Kelangkapan Berkas/Revisi',
+        // '3' => 'Hold',
+        '4' => 'Dikembalikan',
         '9' => 'Selesai'
     ];
     public $ref_sts_stop = [

@@ -73,6 +73,7 @@ class SPermohonan
         $current->id_user_perjalanan = Auth::user()->id_user;
         $current->catatan = $dt_process['catatan'];
         $current->wkt_selesai_perjalanan = $dt_process['wkt_process'];
+        $current->tgl_riil = $dt_process['tgl_riil'];
         $current->updated_at = $dt_process['wkt_process'];
         $current->updated_by = Auth::user()->id_user;
         $current->save();

@@ -61,7 +61,8 @@ Histori {!! $subtitle !!}
                                         <th>Tahap</th>
                                         <th>Waktu Mulai</th>
                                         <th>Deadline</th>
-                                        <th>Waktu Selesai</th>
+                                        <th>Waktu Selesai (App)</th>
+                                        <th>Tanggal Riil</th>
                                         <th>Lama Eksekusi</th>
                                         <th>Pelaksana</th>
                                     </tr>
@@ -82,6 +83,7 @@ Histori {!! $subtitle !!}
                                                     @endif
                                                 </td>
                                                 <td>{{ $help->parseDateTime($r->wkt_selesai_perjalanan) }}</td>
+                                                <td>{{ $help->parseDate($r->tgl_riil) }}</td>
                                                 <td>{{ $help->timeLeft($r->wkt_mulai_perjalanan, $r->wkt_selesai_perjalanan, '') }}</td>
                                                 <td align="center">
                                                     {{ ($r->nm_user ? $r->nm_user : $r->nm_role) }}
@@ -107,6 +109,10 @@ Histori {!! $subtitle !!}
                                                                 @break
                                                         @endswitch
                                                         <br>{{ link_to($route, $btnText, ['class' => 'btn btn-info btn-sm']) }}
+                                                    @else
+                                                        @if ($r->jns_tahap == 'form' && $r->id_role_tahap == (new BAuth)->getActiveRole())
+                                                            <br>{{ link_to(route($r->ext_form_route, ['id' => $r->id_permohonan]), 'Detail/Edit', ['class' => 'btn btn-primary btn-sm']) }}
+                                                        @endif
                                                     @endif
                                                     @if ($r->jns_tahap == 'print')
                                                         <a href="{{ route($r->ext_form_route, ['id' => $r->id_permohonan]) }}" class="btn btn-success btn-sm"><i class="bi bi-printer"></i> Cetak</a>

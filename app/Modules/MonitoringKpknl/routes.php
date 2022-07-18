@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\MonitoringKpkNl\Controllers\JnsPermohonanController;
 use Illuminate\Support\Facades\Route;
 use App\Modules\MonitoringKpkNl\Controllers\TimPenilaianController;
 use App\Modules\MonitoringKpkNl\Controllers\TahapMonitoringController;
@@ -14,6 +15,16 @@ Route::group(['middleware' => ['web','auth'],'namespace' => 'App\Modules'.$nama_
     Route::get('/edit/{id}', [TimPenilaianController::class, 'edit'])->name($slug.'.edit');
     Route::post('/update', [TimPenilaianController::class, 'update'])->name($slug.'.update');
     Route::get('/delete/{id}', [TimPenilaianController::class, 'delete'])->name($slug.'.delete');
+});
+
+$slug = 'jns_permohonan';
+Route::group(['middleware' => ['web','auth'],'namespace' => 'App\Modules'.$nama_modul.'\Controllers','prefix'=>$slug], function () use ($slug){
+    Route::get('/', [JnsPermohonanController::class, 'index'])->name($slug.'.read');
+    Route::get('/create', [JnsPermohonanController::class, 'create'])->name($slug.'.create');
+    Route::post('/store', [JnsPermohonanController::class, 'store'])->name($slug.'.store');
+    Route::get('/edit/{id}', [JnsPermohonanController::class, 'edit'])->name($slug.'.edit');
+    Route::post('/update', [JnsPermohonanController::class, 'update'])->name($slug.'.update');
+    Route::get('/delete/{id}', [JnsPermohonanController::class, 'delete'])->name($slug.'.delete');
 });
 
 $slug = 'tahap_monitoring';
@@ -85,4 +96,8 @@ Route::group(['middleware' => ['web','auth'],'namespace' => 'App\Modules'.$nama_
     // 18. Menerbitkan Surat Tugas Tim Penilai
     Route::get('/form-st-penilai/{id}', [PerjalananController::class, 'formStTimPenilai'])->name($slug.'.form-st-penilai.read');
     Route::post('/st-penilai', [PerjalananController::class, 'postStTimPenilai'])->name($slug.'.st-penilai.read');
+
+    // Update isi data permohonan & stop perjalanan
+    Route::post('/update-data', [PerjalananController::class, 'postUpdateData'])->name($slug.'.update-data.read');
 });
+
