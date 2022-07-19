@@ -39,7 +39,7 @@ class PermohonanExt extends Model
         'dok_laporan_apip'      => 'Laporan dari APIP',
     ];
 
-    public $ref_jns_form_khusus = ['ksp', 'bgs', 'bsg'];
+    public $ref_jns_form_khusus = ['dok_proposal', 'dok_laporan_keuangan', 'dok_laporan_apip'];
 
     public static function validation_data($update_id = "NULL") {
         return [

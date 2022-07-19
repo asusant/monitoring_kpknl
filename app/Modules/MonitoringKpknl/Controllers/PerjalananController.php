@@ -88,8 +88,8 @@ class PerjalananController extends Controller
         $data['next_deadline'] = (new SPermohonan)->getNextDeadline(@$data['next_tahap']->urutan_tahap, $data['now']);
         $data['permohonan_ext'] = PermohonanExt::find($id);
         $data['allow_save'] = true;
-        $data['list_verifikasi_boolean'] = (new PermohonanExt())->ref_boolean_col;
-        $data['ref_permohonan_ext'] = (new PermohonanExt());
+        $data['list_verifikasi_boolean'] = $data['permohonan_ext']->ref_boolean_col;
+        $data['list_form_khusus'] = $data['permohonan_ext']->ref_jns_form_khusus;
         $data['ref_sts_permohonan'] = $data['permohonan']->ref_sts_permohonan;
         if($data['allow_save'])
         {

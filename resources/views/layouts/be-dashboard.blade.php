@@ -235,7 +235,7 @@
     {{-- Non Mandatory Here --}}
     @yield('extra-js')
 
-    <script src="{{ asset('js/bapp.js?v=1') }}"></script>
+    <script src="{{ asset('js/bapp.js?v=2') }}"></script>
 
     {{-- SSO --}}
     @if(session()->get('is_sso'))

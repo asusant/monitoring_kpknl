@@ -58,11 +58,16 @@
                                     </div>
                                 </div>
                                 @endif
+                                {{-- <div class="col-md-5 text-end">
+                                    <label for=""></label>
+                                </div>
+                                <div class="col-md-3"> </div>
+                                <div class="col-md-4"></div> --}}
                                 @foreach ($list_verifikasi_boolean as $nm_col => $desc)
-                                    <div class="col-md-5 text-end">
+                                    <div class="col-md-5 text-end {{ (in_array($nm_col, $list_form_khusus) ? 'khusus' : '') }}">
                                         <label for="{{ $nm_col }}">{{ $desc }}</label>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 {{ (in_array($nm_col, $list_form_khusus) ? 'khusus' : '') }}">
                                         <div class="form-group">
                                             {{ Form::select($nm_col, config('bobb.str_boolean.ada'), NULL, ['class' => 'form-control', 'id' => $nm_col, 'placeholder' => ':: Status Kelengkapan ::']) }}
                                             @if ($errors->has($nm_col))
@@ -71,7 +76,7 @@
                                             @endif
                                         </div>
                                     </div>
-                                    <div class="col-md-4"></div>
+                                    <div class="col-md-4 {{ (in_array($nm_col, $list_form_khusus) ? 'khusus' : '') }}"></div>
                                 @endforeach
                                 <div class="col-md-5 text-end">
                                     <label for="dok_lainnya">Lainnya</label>
@@ -106,4 +111,9 @@
 @endsection
 
 @section('extra-js')
+<script>
+    (function(){
+        document.getElementById();
+    })();
+</script>
 @endsection

@@ -113,6 +113,14 @@ function checkAll(elmName, source)
     }
 }
 
+function toggleDisplay(elmName, display)
+{
+    elements = document.getElementsByName(elmName);
+    for (var i = 0, n = elements.length; i < n; i++) {
+        elements[i].style.display = display;
+    }
+}
+
 function initTooltip()
 {
     // tooltip
